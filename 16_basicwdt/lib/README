@@ -1,0 +1,5 @@
+
+In PlatformIO, this directory is intended for project specific (private) libraries.
+However the Arduino IDE cannot find libraries located here. In order to make this
+sketch compile in both environments, libraries are stored in a directory called
+`src` inside the directory containing the sketch's `.ino` file.

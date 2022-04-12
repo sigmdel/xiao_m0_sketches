@@ -1,0 +1,49 @@
+
+The Arduino IDE can find private libraries only if they are located in a directroy named `src` inside the directory containing the sketch's `.ino` file.
+
+Here is an example directory structure of a sketch named `myapp.ino`  with two private libraries `Foo` and `Bar`. The sketch can be compiled in both the Arduino IDE and PlatformIO.
+
+```
+myapp_0_12
+|
+|- platformio.ini  // must contain
+|
+|--myapp
+   |- main.cpp
+   |- myapp.ino
+   +--src
+       |
+       |--Bar
+       |  |--docs
+       |  |--examples
+       |  +--src
+       |     |- Bar.cpp
+       |     |- Bar.h
+       |     +- library.json (optional, custom build options, etc)
+       |
+       +--Foo
+          |- Foo.cpp
+          +- Foo.h
+```
+
+The libraries are included in the `src/main.cpp` file:
+
+```
+#include "src/Foo.h"
+#include "src/Bar/src/Bar.h"
+... 
+```
+
+The `platformio.ini` configuration file must contain the `src_dir` option.
+
+```
+[platformio]
+; Make the Arduino IDE happy (.INO file must be in a directory of the same name)
+src_dir = myapp
+```
+
+More information about the PlatformIO Library Dependency Finder
+- https://docs.platformio.org/page/librarymanager/ldf.html
+
+More information about the `src` subfolder in the Arduino Sketch specification
+ - https://arduino.github.io/arduino-cli/0.21/sketch-specification/#src-subfolder

@@ -1,0 +1,90 @@
+/*
+
+wdt
+
+Sam D21 hardware watchog by Adrian Adamski
+https://github.com/ajadamsky/Watchdog-Arudino-MKR-WiFi-1010
+Watchdog interrupt on SAM D21
+25.April.2020
+
+but see
+
+https://github.com/adafruit/Adafruit_SleepyDog
+Adafruit SleepyDog Arduino Library
+
+see
+
+/home/michel/.platformio/packages/framework-cmsis-atmel/CMSIS/Device/ATMEL/samd21/include/component/wdt.h
+//** \brief WDT hardware registers
+#if !(defined(__ASSEMBLY__) || defined(__IAR_SYSTEMS_ASM__))
+typedef struct {
+  __IO WDT_CTRL_Type             CTRL;        //**< \brief Offset: 0x0 (R/W  8) Control
+  __IO WDT_CONFIG_Type           CONFIG;      //**< \brief Offset: 0x1 (R/W  8) Configuration
+  __IO WDT_EWCTRL_Type           EWCTRL;      //**< \brief Offset: 0x2 (R/W  8) Early Warning Interrupt Control
+       RoReg8                    Reserved1[0x1];
+  __IO WDT_INTENCLR_Type         INTENCLR;    //**< \brief Offset: 0x4 (R/W  8) Interrupt Enable Clear
+  __IO WDT_INTENSET_Type         INTENSET;    //**< \brief Offset: 0x5 (R/W  8) Interrupt Enable Set
+  __IO WDT_INTFLAG_Type          INTFLAG;     //**< \brief Offset: 0x6 (R/W  8) Interrupt Flag Status and Clear
+  __I  WDT_STATUS_Type           STATUS;      //**< \brief Offset: 0x7 (R/   8) Status
+  __O  WDT_CLEAR_Type            CLEAR;       //**< \brief Offset: 0x8 ( /W  8) Clear
+} Wdt;
+
+
+/home/michel/.platformio/packages/framework-cmsis-atmel/CMSIS/Device/ATMEL/samd21/include/samd21g18a.h
+#define WDT               ((Wdt      *)0x40001000UL) //**< \brief (WDT) APB Base Address
+#define WDT_INST_NUM      1                          /.**< \brief (WDT) Number of instances
+#define WDT_INSTS         { WDT }                    //**< \brief (WDT) Instances List
+
+
+
+*/
+
+#include <Arduino.h>
+#include <sam.h>
+
+#define GLCK_BASE ((uint8_t*)(0x40000C00))
+#define GLCK_GENCTRL *((uint32_t*)(GLCK_BASE + 0x4))
+#define GLCK_GENDIV *((uint32_t*)(GLCK_BASE + 0x8))
+
+#define WDT_BASE ((uint8_t*)(0x40001000))             //  WDT
+#define WDT_CONFIG *((uint8_t*)(WDT_BASE + 0x1))      // 
+#define WDT_CTRL *((uint8_t*)(WDT_BASE + 0x0))
+#define WDT_CLEAR *((uint8_t*)(WDT_BASE + 0x08))
+
+void wdtInit() {
+  GLCK_GENCTRL = (0x2 << 0) | (1 << 20) | (0x03 << 8) | (1 << 16); // Select generic clock 2 | Divide the clock by 2^(GENDIV.DIV+1) | Set the clock source to OSCULP32K |  Enable GCLK2
+  GLCK_GENDIV = (0x2 << 0) | (0x3 << 8);                           // Select generic clock 2 | 8 seconds time-out period
+  WDT_CONFIG |= (0x6 << 0);                                        // 512 Hz
+  WDT_CTRL |= (1 << 1);                                            // Enable the watchdog
+}
+
+void wdtFeed(void) {
+  WDT_CLEAR |= (0xA5);
+}
+
+unsigned long wdtTimer;
+
+void setup() {
+ delay(8000);
+ pinMode(LED_BUILTIN, OUTPUT);
+ wdtInit();
+ Serial.println("Watchdog initiated");
+ wdtTimer = millis();
+ Serial.println("setup() completed, starting loop()");
+}
+
+
+int count = 5;
+
+void loop() {
+  if ((millis() - wdtTimer > 7000) && count) {
+    Serial.printf("Feeding watchdog after 7 seconds - countdown: %d\n", count);
+    wdtFeed();
+    wdtTimer = millis();
+    count--;
+    if (!count)
+      Serial.println("No longer feeding watchdog");
+  }
+  digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+  delay(250);
+}
