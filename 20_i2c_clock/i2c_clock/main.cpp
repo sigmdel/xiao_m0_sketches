@@ -20,6 +20,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+// private libraries
 #include "src/RTC/src/RtcDS3231.h"
 #include "src/SSD1306Ascii/src/SSD1306Ascii.h"
 #include "src/SSD1306Ascii/src/SSD1306AsciiWire.h"
@@ -37,7 +38,7 @@
 #define RST_PIN -1
 
 
-// -- RTC params --
+// -- Time params --
 
 const char* dow[] = {
   "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
@@ -50,7 +51,6 @@ const char* month[] = {
 
 #define TIME_STR "%02d:%02d", now.Hour(), now.Minute()
 #define DATE_STR "%s %d, %d", month[now.Month()], now.Day(), now.Year()
-#define ERROR_STR  "** error **"
 
 
 RtcDS3231<TwoWire> rtc(Wire);
@@ -75,7 +75,6 @@ void setup() {
   rtc.Enable32kHzPin(false);
   rtc.SetSquareWavePin(DS3231SquareWavePin_ModeNone);
 
-
 #if RST_PIN >= 0
   oled.begin(&Adafruit128x64, I2C_ADDRESS, RST_PIN);
 #else
@@ -93,6 +92,7 @@ void center(char* str) {
   oled.print(str);
 }
 
+// redraw the screen once a minute, when its value changes
 int prevminute = -1;
 
 void loop () {

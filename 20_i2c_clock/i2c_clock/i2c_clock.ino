@@ -1,5 +1,5 @@
 /*
- * i2c_ldr.ino
+ * i2c_clock.ino
  *
  * Seeeduino XIAO - I²C demo program
  *
