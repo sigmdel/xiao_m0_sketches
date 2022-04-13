@@ -26,7 +26,7 @@ int level[NUM_TOUCH_PINS] {0};
 
 // Update the average capacitance measure.
 // This is actually a weighted moving average with weights of older
-// measures vanashing to 0
+// measures vanishing to 0
 void updateLevel(int touchPin, int val) {
   level[touchPin] = (( N * level[touchPin] ) + val ) / ( N + 1 );
 }
