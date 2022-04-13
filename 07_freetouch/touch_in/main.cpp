@@ -20,35 +20,35 @@ Adafruit_FreeTouch qt[NUM_TOUCH_PINS] = {
 };
 
 // Maximum normal capacitance measures of each touch pin
-int threshhold[NUM_TOUCH_PINS] { 0, 0, 0, 0, 0, 0, 0};
+int threshold[NUM_TOUCH_PINS] { 0, 0, 0, 0, 0, 0, 0};
 
 // Update the maximum capacitance measure during calibration
-void updateThreshhold(int touchPin, int val) {
-  if (val > threshhold[touchPin]) threshhold[touchPin] = val;
+void updateThreshold(int touchPin, int val) {
+  if (val > threshold[touchPin]) threshold[touchPin] = val;
 }
 
-// Set the threshhold at scale * maximum recored capacitance measure
-void setThreshholds(float scale) {
+// Set the threshold at scale * maximum recorded capacitance measure
+void setThresholds(float scale) {
   for (int touchPin=0; touchPin < NUM_TOUCH_PINS; touchPin++) {
-    threshhold[touchPin] = (int) (scale*threshhold[touchPin]);
+    threshold[touchPin] = (int) (scale*threshold[touchPin]);
   }
 }
 
 // Measure the capacitance of each pin count times to find the
-// maximum value and then scale it to establish the threshhold.
-void calibrateThreshholds(int count, float scale) {
+// maximum value and then scale it to establish the threshold.
+void calibrateThresholds(int count, float scale) {
   for (int n=0; n<count; n++) {
     for (int touchPin=0; touchPin < NUM_TOUCH_PINS; touchPin++) {
-      updateThreshhold(touchPin, qt[touchPin].measure());
+      updateThreshold(touchPin, qt[touchPin].measure());
       delay(5);
     }
   }
-  setThreshholds(scale);
+  setThresholds(scale);
 }
 
-// Return 1 if val > thresshold or 0 otherwise
+// Return 1 if val > threshold or 0 otherwise
 int touched(int touchPin, int val) {
-  if (val > threshhold[touchPin])
+  if (val > threshold[touchPin])
     return 1;
   return 0;
 }
@@ -72,12 +72,12 @@ void setup() {
     }
   }
   if (allgood) {
-    calibrateThreshholds(200, 1.1);
+    calibrateThresholds(200, 1.1);
 
 #ifdef PLATFORMIO
-    Serial.println("Threshholds:");
+    Serial.println("thresholds:");
     for (int touchPin = 0; touchPin < NUM_TOUCH_PINS; touchPin++ ) {
-      Serial.printf("  touch pin %d: %d\n", touchPin, threshhold[touchPin]);
+      Serial.printf("  touch pin %d: %d\n", touchPin, threshold[touchPin]);
     }
 #endif
   }
