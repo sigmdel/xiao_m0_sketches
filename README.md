@@ -1,35 +1,32 @@
 # xiao_m0_sketches
 
-**Source code that accompanies the april 2022 version of [Overview of the SAMD21 Arm Cortex-M0+ Based Seeeduino XIAO](https://sigmdel.ca/michel/ha/xiao/seeeduino_xiao_01_en.html)**.
+**Source code that accompanies the April 2022 version of [Overview of the SAMD21 Arm Cortex-M0+ Based Seeeduino XIAO](https://sigmdel.ca/michel/ha/xiao/seeeduino_xiao_01_en.html)**.
 
 ![XIAO M0 Pinout](images/xiao.jpg)
 
 ## Introduction
 
-It did not make sense to create a repository for each of these twenty projects so it will be necessary to download the `ZIP` archive or clone the full set.
-
 It should be possible to compile each project in the Arduino IDE or in PlatformIO. Each 
 project should have no unresolved dependencies, meaning that all needed libraries are included. In other words, there should not be any need to install anything additional. Where a private library is included, only the necessary files were added. Please obtain the full library from the original source if it is to be used in another project.
 
-<!--
-Supporting both environments as seamlessly as possible means taking care of some constraints.
+## Obtaining the projects
 
-1. Sketch Extension
-  - The Arduino environment requires that the filename of a sketch ends with the `.ino` extension. 
-  - C/C++ IntelliSense, which handles code completion in PlatformIO, does not support `.INO` files.
+It did not make sense to create a repository for each of these twenty projects so these are all lumped together. Download the `ZIP` archive or clone the repository to get a copy of all the projects at once.
 
-2. File and Directory Names
-  -  The Arduino environment requires that a sketch (with the `.ino` extension) be contained in a directory with the same name less the extension.
-  -  PlatformIO expects that the source code will be in a subdirectory named `src`.
+To download a single project at a time try:
 
-3. Library location
-  -  The Arduino environment can find private libraries but only if they are in a subdirectory named `src` within the directory containing the `.ino` file.
-  -  PlatformIO expects that the source code will be in a subdirectory named `lib`.
-  
-Solution 1: Move the content of the `project_name.ino` file to `main.cpp` and let `project_name.ino` contain only comments.
+<pre>
+~/temp$ <b>svn checkout https://github.com/sigmdel/xiao_m0_sketches/trunk/01_blink</b>
+A    01_blink/.gitignore
+A    01_blink/blink
+A    01_blink/blink/blink.ino
+A    01_blink/blink/main.cpp
+A    01_blink/include
+A    01_blink/include/README
+A    01_blink/platformio.ini
+</pre>
 
-Solution 2: Respect the Arduino requirement and add a `src_dir` option in the `platformio.ini` configuration file.
--->
+Apparently, it is more complicated but nevertheless possible to do the same with `git`, see [Quick tip: Clone a single folder from Github](https://dev.to/kiwicopple/quick-tip-clone-a-single-folder-from-github-44h6) by Paul Copplestone and [Checkout a single folder from a GitHub repository](https://coderwall.com/p/mglmxa/checkout-a-single-folder-from-a-github-repository) by Barnaby Alter.
 
 ## List of Projects      
 
